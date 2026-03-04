@@ -49,20 +49,42 @@ impl IndicatorType {
     pub fn available_sections(&self) -> &[&str] {
         match self {
             IndicatorType::IPv4 => &[
-                "general", "geo", "reputation", "url_list", "passive_dns",
-                "malware", "nids_list", "http_scans",
+                "general",
+                "geo",
+                "reputation",
+                "url_list",
+                "passive_dns",
+                "malware",
+                "nids_list",
+                "http_scans",
             ],
             IndicatorType::IPv6 => &[
-                "general", "geo", "reputation", "url_list", "passive_dns",
-                "malware", "nids_list", "http_scans",
+                "general",
+                "geo",
+                "reputation",
+                "url_list",
+                "passive_dns",
+                "malware",
+                "nids_list",
+                "http_scans",
             ],
             IndicatorType::Domain => &[
-                "general", "geo", "url_list", "passive_dns", "malware",
-                "whois", "http_scans",
+                "general",
+                "geo",
+                "url_list",
+                "passive_dns",
+                "malware",
+                "whois",
+                "http_scans",
             ],
             IndicatorType::Hostname => &[
-                "general", "geo", "url_list", "passive_dns", "malware",
-                "whois", "http_scans",
+                "general",
+                "geo",
+                "url_list",
+                "passive_dns",
+                "malware",
+                "whois",
+                "http_scans",
             ],
             IndicatorType::File => &["general", "analysis"],
             IndicatorType::Url => &["general", "url_list", "http_scans", "screenshot"],
@@ -153,9 +175,7 @@ fn is_email(value: &str) -> bool {
     if local.is_empty() || domain_part.is_empty() {
         return false;
     }
-    domain_part.contains('.')
-        && !domain_part.starts_with('.')
-        && !domain_part.ends_with('.')
+    domain_part.contains('.') && !domain_part.starts_with('.') && !domain_part.ends_with('.')
 }
 
 fn is_hex(value: &str) -> bool {
