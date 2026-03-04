@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__otx__otx_lookup",
+      "mcp__otx__otx_indicator_details",
+      "mcp__otx__otx_indicator_sections"
+    ]
+  },
+  "mcpServers": {
+    "otx": {
+      "command": "./target/release/otx_mcp"
+    }
+  }
+}
