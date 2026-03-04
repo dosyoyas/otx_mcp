@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use rmcp::handler::server::tool::ToolRouter;
 use rmcp::handler::server::wrapper::Parameters;
-use rmcp::{ServerHandler, tool, tool_handler, tool_router};
+use rmcp::{tool, tool_handler, tool_router, ServerHandler};
 use schemars::JsonSchema;
 use serde::Deserialize;
 
@@ -20,7 +20,9 @@ pub struct OtxTools {
 struct LookupParams {
     #[schemars(description = "Indicator value (IP, domain, hash, CVE, URL, email)")]
     indicator: String,
-    #[schemars(description = "Override auto-detection: IPv4, IPv6, domain, hostname, file, url, cve, email")]
+    #[schemars(
+        description = "Override auto-detection: IPv4, IPv6, domain, hostname, file, url, cve, email"
+    )]
     indicator_type: Option<String>,
 }
 
@@ -53,25 +55,37 @@ impl OtxTools {
         }
     }
 
-    #[tool(description = "Look up an indicator in AlienVault OTX. Auto-detects type (IP, domain, hostname, hash, URL, CVE, email). Returns general info, pulse membership, and threat context.")]
+    #[tool(
+        description = "Look up an indicator in AlienVault OTX. Auto-detects type (IP, domain, hostname, hash, URL, CVE, email). Returns general info, pulse membership, and threat context."
+    )]
     async fn otx_lookup(&self, Parameters(params): Parameters<LookupParams>) -> String {
         let itype = match resolve_type(&params.indicator, params.indicator_type.as_deref()) {
             Ok(t) => t,
             Err(e) => return format!("Error: {e}"),
         };
-        match self.client.get_indicator(&itype, &params.indicator, "general").await {
+        match self
+            .client
+            .get_indicator(&itype, &params.indicator, "general")
+            .await
+        {
             Ok(data) => format_general(&params.indicator, &itype, &data),
             Err(e) => format!("Error: {e}"),
         }
     }
 
-    #[tool(description = "Get detailed data for a specific section of an OTX indicator. Use after otx_lookup to drill into passive_dns, malware, geo, whois, url_list, etc.")]
+    #[tool(
+        description = "Get detailed data for a specific section of an OTX indicator. Use after otx_lookup to drill into passive_dns, malware, geo, whois, url_list, etc."
+    )]
     async fn otx_indicator_details(&self, Parameters(params): Parameters<DetailsParams>) -> String {
         let itype = match resolve_type(&params.indicator, params.indicator_type.as_deref()) {
             Ok(t) => t,
             Err(e) => return format!("Error: {e}"),
         };
-        match self.client.get_indicator(&itype, &params.indicator, &params.section).await {
+        match self
+            .client
+            .get_indicator(&itype, &params.indicator, &params.section)
+            .await
+        {
             Ok(data) => format_section(&params.section, &data),
             Err(e) => format!("Error: {e}"),
         }

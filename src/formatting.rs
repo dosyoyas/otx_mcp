@@ -277,10 +277,7 @@ fn format_url_list(data: &Value) -> String {
     for e in shown {
         let url = str_field(e, "url");
         let date = str_field(e, "date");
-        let httpcode = e
-            .get("httpcode")
-            .map(|v| v.to_string())
-            .unwrap_or_default();
+        let httpcode = e.get("httpcode").map(|v| v.to_string()).unwrap_or_default();
         out.push_str(&format!("| {} | {} | {} |\n", url, date, httpcode));
     }
     if total > 25 {
@@ -353,9 +350,15 @@ fn format_analysis(data: &Value) -> String {
 fn format_nids_list(data: &Value) -> String {
     // Try top-level array or nested "nids" key
     let rules: Vec<String> = if let Some(arr) = data.as_array() {
-        arr.iter().filter_map(Value::as_str).map(String::from).collect()
+        arr.iter()
+            .filter_map(Value::as_str)
+            .map(String::from)
+            .collect()
     } else if let Some(arr) = data.get("nids_list").and_then(Value::as_array) {
-        arr.iter().filter_map(Value::as_str).map(String::from).collect()
+        arr.iter()
+            .filter_map(Value::as_str)
+            .map(String::from)
+            .collect()
     } else {
         vec![]
     };
@@ -445,7 +448,10 @@ mod tests {
         });
         let result = format_general("CVE-2021-44228", &IndicatorType::Cve, &data);
         assert!(result.contains("CVE-2021-44228"), "missing indicator name");
-        assert!(result.contains("pulse_info") || result.contains("Pulse"), "missing pulse_info section");
+        assert!(
+            result.contains("pulse_info") || result.contains("Pulse"),
+            "missing pulse_info section"
+        );
     }
 
     #[test]
@@ -460,7 +466,10 @@ mod tests {
         });
         let result = format_section("passive_dns", &data);
         assert!(result.contains("mail.example.com"), "missing hostname");
-        assert!(result.contains("smtp.example.com"), "missing second hostname");
+        assert!(
+            result.contains("smtp.example.com"),
+            "missing second hostname"
+        );
         assert!(result.contains("MX"), "missing record type");
         // No truncation note for 3 entries
         assert!(!result.contains("truncated"));
@@ -480,14 +489,20 @@ mod tests {
             .collect();
         let data = json!({ "passive_dns": entries });
         let result = format_section("passive_dns", &data);
-        assert!(result.contains("truncated"), "should show truncation note for 30 entries");
+        assert!(
+            result.contains("truncated"),
+            "should show truncation note for 30 entries"
+        );
     }
 
     #[test]
     fn test_format_malware_empty() {
         let data = json!({ "data": [], "count": 0, "size": 0 });
         let result = format_section("malware", &data);
-        assert!(result.contains("No malware data"), "should indicate no data");
+        assert!(
+            result.contains("No malware data"),
+            "should indicate no data"
+        );
     }
 
     #[test]
