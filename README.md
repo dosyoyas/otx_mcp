@@ -2,6 +2,11 @@
 
 An [MCP](https://modelcontextprotocol.io/) server that exposes [AlienVault OTX](https://otx.alienvault.com/) threat intelligence to Claude and other MCP clients.
 
+## Prerequisites
+
+- [Rust](https://rustup.rs/) (stable toolchain)
+- A free AlienVault OTX account and API key — sign up at <https://otx.alienvault.com/api>
+
 ## Build
 
 ```bash
@@ -12,39 +17,37 @@ The binary will be at `./target/release/otx_mcp`.
 
 ## Configuration
 
-### Environment Variable
-
-```bash
-export OTX_KEY_CI=your-api-key
-```
-
-Get your API key from <https://otx.alienvault.com/api>.
-
 ### Claude Desktop
 
-Edit `~/Library/Application Support/Claude/claude_desktop_config.json`:
+Edit `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
 
 ```json
 {
   "mcpServers": {
     "otx": {
       "command": "/absolute/path/to/otx_mcp",
-      "env": { "OTX_KEY_CI": "your-key" }
+      "env": { "OTX_API_KEY": "your-key" }
     }
   }
 }
 ```
 
-### Claude Code (project)
+### Claude Code
 
-Edit `.claude/settings.json` in the project root:
+This repo includes a `.claude/settings.json` that loads the server automatically once built. You just need `OTX_API_KEY` set in your shell environment:
+
+```bash
+export OTX_API_KEY=your-api-key
+```
+
+To use the server in a different project, add this to that project's `.claude/settings.json`:
 
 ```json
 {
   "mcpServers": {
     "otx": {
       "command": "/absolute/path/to/otx_mcp",
-      "env": { "OTX_KEY_CI": "your-key" }
+      "env": { "OTX_API_KEY": "your-key" }
     }
   }
 }
@@ -75,5 +78,5 @@ cargo test
 Integration tests (requires API key):
 
 ```bash
-OTX_KEY_CI=your-key cargo test -- --ignored
+OTX_API_KEY=your-key cargo test -- --ignored
 ```

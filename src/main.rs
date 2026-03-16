@@ -12,7 +12,10 @@ use tools::OtxTools;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    tracing_subscriber::fmt().with_env_filter("info").init();
+    tracing_subscriber::fmt()
+        .with_env_filter("info")
+        .with_writer(std::io::stderr)
+        .init();
     let client = OtxClient::new()?;
     let handler = OtxTools::new(Arc::new(client));
     let transport = (tokio::io::stdin(), tokio::io::stdout());

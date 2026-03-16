@@ -3,7 +3,7 @@ use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum OtxError {
-    #[error("OTX_KEY_CI env var not set")]
+    #[error("OTX_API_KEY env var not set")]
     MissingApiKey,
     #[error("Could not detect indicator type for '{0}'. Specify indicator_type.")]
     DetectionFailed(String),
@@ -35,7 +35,7 @@ pub struct OtxClient {
 
 impl OtxClient {
     pub fn new() -> Result<Self, OtxError> {
-        let api_key = std::env::var("OTX_KEY_CI").map_err(|_| OtxError::MissingApiKey)?;
+        let api_key = std::env::var("OTX_API_KEY").map_err(|_| OtxError::MissingApiKey)?;
         Ok(Self {
             http: reqwest::Client::new(),
             api_key,
@@ -93,7 +93,7 @@ mod tests {
 
     #[test]
     fn test_missing_api_key() {
-        std::env::remove_var("OTX_KEY_CI");
+        std::env::remove_var("OTX_API_KEY");
         let result = OtxClient::new();
         assert!(matches!(result, Err(OtxError::MissingApiKey)));
     }
